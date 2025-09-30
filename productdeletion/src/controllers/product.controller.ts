@@ -26,7 +26,6 @@ export class ProductController {
     const decoded: any = jwt.verify(token, JWT_SECRET);
     const {name, role} = decoded;
 
-    // check in authtable for delete permission
     const access = await this.authtableRepo.findOne({
       where: {name, role, property: 'delete'},
     });
@@ -35,13 +34,11 @@ export class ProductController {
       throw new HttpErrors.Forbidden('Access denied for delete');
     }
 
-    // Check if product exists
     const product = await this.userproRepo.findById(id).catch(() => null);
     if (!product) {
       throw new HttpErrors.NotFound(`Product with id ${id} not found`);
     }
 
-    // Delete the product
     const deleted=await this.userproRepo.deleteById(id);
 
      const logData = {
@@ -53,6 +50,6 @@ export class ProductController {
 
     const query=this.productRepo.create(logData);
 
-    return {message: `✅ Product with id ${id} deleted successfully`};
+    return {message: `Product with id ${id} deleted successfully`};
   }
 }

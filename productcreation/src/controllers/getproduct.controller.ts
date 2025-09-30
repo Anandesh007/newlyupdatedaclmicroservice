@@ -15,7 +15,6 @@ export class GetproductController {
     public userproRepo: UserproductRepository
   ) {}
 
-  // 🟢 CREATE Product
   @post('/products')
   async createProduct(
     @requestBody() userdata: any,
@@ -44,7 +43,6 @@ export class GetproductController {
     const query=this.productRepo.create(finalData);
     await this.userproRepo.create(userdata);
 
-    // Business logic goes here
-    return {message: '✅ Product created successfully', userdata};
+    return {message: 'Product created successfully', userdata};
   }
 }

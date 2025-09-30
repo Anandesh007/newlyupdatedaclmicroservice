@@ -20,14 +20,12 @@ export class ProductController {
     @param.path.number('id') id: number,
     @param.header.string('Authorization') authHeader: string,
   ) {
-    // 🔐 Verify JWT token
     const token = authHeader?.replace('Bearer ', '');
     if (!token) throw new HttpErrors.Unauthorized('Missing token');
 
     const decoded: any = jwt.verify(token, JWT_SECRET);
     const {name, role} = decoded;
 
-    // 🔸 Check authtable for 'findById' permission
     const access = await this.authtableRepo.findOne({
       where: {name, role, property: 'findById'},
     });
@@ -36,13 +34,11 @@ export class ProductController {
       throw new HttpErrors.Forbidden('Access denied for findById');
     }
 
-    // 📝 Fetch product by ID
     const product = await this.userproRepo.findById(id).catch(() => null);
     if (!product) {
       throw new HttpErrors.NotFound(`Product with id ${id} not found`);
     }
 
-    // access control list
     const finalData={
         name: product.name,
         price: product.price,
@@ -50,9 +46,8 @@ export class ProductController {
         username: name};
     await this.productRepo.create(finalData);
 
-    // ✅ Return full product details
     return {
-      message: `✅ Product found successfully`,
+      message: `Product found successfully`,
       data: {
         name: product.name,
         price: product.price,
